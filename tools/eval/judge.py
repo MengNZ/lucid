@@ -1,22 +1,20 @@
 """
-LLM-as-Judge：用 chat_llm 独立评估 joker 的分析质量。
+LLM-as-Judge：用 json_llm 独立评估 joker 的分析质量。
 两个维度：覆盖度（关键点都提了吗） + 正确性（方向对吗）。
 
 设计原则：
+- json_object 结构化输出 + extract_json 提取（与 5 个 graph 节点一致，不用 bind_tools）
 - 多选题 → 代码查表算分（与 joker v1 checklist 模式一致）
 - 对抗性 prompt——裁判默认姿态是"找问题"，不是"确认正确"
-- 用 chat 模型（deepseek-chat, T=0），与 graph 模型隔开
 - 双跑取均值——降低单次评分的偶然性
 """
 
 import asyncio
-import json
 
 from langchain.messages import SystemMessage
-from langchain.tools import tool
 
-from tools.llm.chat_llm import llm
-from tools.llm.safe_llm_call import safe_llm_call_async
+from tools.llm.chat_llm import json_llm as llm
+from tools.llm.safe_llm_call import safe_json_call_async
 
 
 # ─── 格式化 joker 输出 ────────────────────────────────
@@ -71,28 +69,8 @@ def _format_output(result: dict) -> str:
 
 # ─── 覆盖度评分 ───────────────────────────────────────
 
-@tool
-def coverage_return(
-    covered_count: int,
-    missed_count: int,
-    comment: str,
-) -> dict:
-    """
-    返回覆盖度判定。
-    Args:
-        covered_count: 完全覆盖的关键点数
-        missed_count: 未覆盖或只部分覆盖的关键点数
-        comment: 一句话总结（最明显的一个缺口或亮点）
-    """
-    return {
-        "covered_count": covered_count,
-        "missed_count": missed_count,
-        "comment": comment,
-    }
-
-
 def _to_int(v, default=0):
-    """LLM tool call 可能把数字返回成字符串（如 "3"），安全转 int。"""
+    """LLM 可能把数字返回成字符串（如 "3"），安全转 int。"""
     try:
         return int(v)
     except (TypeError, ValueError):
@@ -101,14 +79,13 @@ def _to_int(v, default=0):
 
 async def _run_single_coverage(prompt: str, llm) -> dict | None:
     """单次覆盖度评分调用。失败返回 None。"""
-    response = await safe_llm_call_async(
-        llm, [coverage_return],
+    args = await safe_json_call_async(
+        llm,
         [SystemMessage(content=prompt)],
         node_name="COVERAGE_JUDGE"
     )
-    if response is None:
+    if args is None:
         return None
-    args = response.tool_calls[0]["args"]
     return {
         "covered_count": _to_int(args.get("covered_count", 0)),
         "missed_count": _to_int(args.get("missed_count", 0)),
@@ -147,7 +124,10 @@ async def judge_coverage(scenario: dict, result: dict, llm=llm) -> dict:
 - 如果某个关键点完全没有被讨论，算 missed
 - 如果被简要提及但没有展开，也算 missed（我们要的是"覆盖"，不是"擦边"）
 
-请统计 covered（完全或充分覆盖）和 missed（缺失或擦边）的关键点数，并给出一个简短评论。"""
+请统计 covered（完全或充分覆盖）和 missed（缺失或擦边）的关键点数，并给出一个简短评论。
+
+**输出要求：只输出一个 JSON 对象，不要任何其他文字或 markdown 代码块，格式：**
+{{"covered_count": 3, "missed_count": 1, "comment": "一句话总结"}}"""
 
     # 双跑取均值（并发）
     runs = await asyncio.gather(
@@ -177,29 +157,6 @@ async def judge_coverage(scenario: dict, result: dict, llm=llm) -> dict:
 
 # ─── 正确性评分 ───────────────────────────────────────
 
-@tool
-def correctness_return(
-    direction: str,
-    theory_usage: str,
-    actionable: str,
-    comment: str,
-) -> dict:
-    """
-    返回分析正确性的多维度判定。
-    Args:
-        direction: 核心方向 | A=正确识别认知根源 | B=方向对但深度不够 | C=关注了次要问题 | D=方向错误
-        theory_usage: 理论运用 | A=准确应用于场景 | B=相关但表面化 | C=牵强不匹配 | D=该用理论的地方没用
-        actionable: 可操作性 | A=具体可执行的洞察 | B=给了方向但不具体 | C=停留在抽象层面
-        comment: 一句话总结
-    """
-    return {
-        "direction": direction,
-        "theory_usage": theory_usage,
-        "actionable": actionable,
-        "comment": comment,
-    }
-
-
 # 多选题 → 分数映射
 _DIRECTION_MAP = {"A": 1.0, "B": 0.6, "C": 0.3, "D": 0.0}
 _THEORY_MAP    = {"A": 1.0, "B": 0.5, "C": 0.2, "D": 0.0}
@@ -208,14 +165,13 @@ _ACTION_MAP    = {"A": 1.0, "B": 0.5, "C": 0.0}
 
 async def _run_single_correctness(prompt: str, llm) -> dict | None:
     """单次正确性评分调用。失败返回 None。"""
-    response = await safe_llm_call_async(
-        llm, [correctness_return],
+    args = await safe_json_call_async(
+        llm,
         [SystemMessage(content=prompt)],
         node_name="CORRECTNESS_JUDGE"
     )
-    if response is None:
+    if args is None:
         return None
-    args = response.tool_calls[0]["args"]
     d = str(args.get("direction", "B")).upper()[0]
     t = str(args.get("theory_usage", "B")).upper()[0]
     a = str(args.get("actionable", "B")).upper()[0]
@@ -268,7 +224,10 @@ async def judge_correctness(scenario: dict, result: dict, llm=llm) -> dict:
 3. **分析是否提供了可操作的洞察？**
    A) 有——给出了用户可以直接理解和应用的具体洞察
    B) 一般——给了方向但不具体（如"你要多沟通"但没有说怎么做）
-   C) 无——分析停留在抽象描述层面，用户读完不知道怎么办"""
+   C) 无——分析停留在抽象描述层面，用户读完不知道怎么办
+
+**输出要求：只输出一个 JSON 对象，不要任何其他文字或 markdown 代码块，格式：**
+{{"direction": "A", "theory_usage": "B", "actionable": "B", "comment": "一句话总结"}}"""
 
     # 双跑取均值（并发）
     runs = await asyncio.gather(
