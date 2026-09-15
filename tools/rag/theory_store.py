@@ -10,7 +10,7 @@ import os
 
 import numpy as np
 
-from tools.rag.embedder import get_model
+from tools.rag.embedder import get_model, embed_query
 
 try:
     from sentence_transformers import SentenceTransformer
@@ -115,11 +115,7 @@ class TheoryStore:
         if not self.is_indexed():
             self.ensure_indexed()
 
-        query_emb = self.model.encode(
-            [query],
-            normalize_embeddings=True,
-            show_progress_bar=False,
-        )  # shape: (1, dim)
+        query_emb = embed_query(query)  # shape: (1, dim)，query 侧加 instruction
 
         # 余弦相似度 = 归一化向量的点积
         scores = np.dot(self._embeddings, query_emb.T).flatten()  # shape: (n_cards,)

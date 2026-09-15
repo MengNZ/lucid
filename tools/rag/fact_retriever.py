@@ -6,7 +6,7 @@ fact 的检索文本 = action + signal_type + source_ref（行为的语义内容
 """
 import numpy as np
 
-from tools.rag.embedder import embed
+from tools.rag.embedder import embed, embed_query
 
 
 def _build_fact_text(fact: dict) -> str:
@@ -48,8 +48,8 @@ def retrieve_facts_raw(claims: list[dict], store, top_k: int = 3) -> list[dict]:
     fact_ids = [fid for fid, _ in facts]
     fact_texts = [_build_fact_text(f) for _, f in facts]
 
-    fact_embs = embed(fact_texts)          # (n, dim), L2 归一化
-    query_emb = embed([query])             # (1, dim)
+    fact_embs = embed(fact_texts)          # (n, dim), L2 归一化（passage 侧不加 instruction）
+    query_emb = embed_query(query)         # (1, dim)（query 侧加 instruction）
     scores = np.dot(fact_embs, query_emb.T).flatten()  # (n,)
 
     top_indices = np.argsort(scores)[::-1][:top_k]

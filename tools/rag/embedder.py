@@ -17,6 +17,9 @@ except ImportError:
 _MODEL_NAME = "BAAI/bge-base-zh-v1.5"
 _model = None
 
+# BGE v1.5 非对称检索：query 侧加 instruction 前缀，passage 侧不加
+_QUERY_INSTRUCTION = "为这个句子生成表示以用于检索相关文章："
+
 
 def _resolve_model_path() -> str:
     """定位模型路径：本地缓存 → 自动下载 → 返回绝对路径。"""
@@ -45,5 +48,14 @@ def get_model():
 
 
 def embed(texts) -> "object":
-    """对文本列表做 L2 归一化 embedding，返回 numpy 数组。"""
+    """对文本列表做 L2 归一化 embedding，返回 numpy 数组（passage 侧，不加 instruction）。"""
     return get_model().encode(list(texts), normalize_embeddings=True, show_progress_bar=False)
+
+
+def embed_query(query: str) -> "object":
+    """query 侧 embedding：加 instruction 前缀（BGE v1.5 非对称检索），返回 (1, dim)。"""
+    return get_model().encode(
+        [_QUERY_INSTRUCTION + query],
+        normalize_embeddings=True,
+        show_progress_bar=False,
+    )
