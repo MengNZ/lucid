@@ -75,7 +75,8 @@ async def stream(req: StreamRequest):
     config = {"configurable": {"thread_id": thread_id}}
 
     async def gen():
-        set_run_id(thread_id)  # 本轮所有节点日志带上这个 run_id，串成一条调用链
+        run_id = f"{thread_id}:{uuid.uuid4().hex[:8]}"  # 每轮随机，thread_id 前缀溯源；与 thread_id 解耦
+        set_run_id(run_id)  # 本轮所有节点日志带上这个 run_id，串成一条调用链
         in_summary = False
         try:
             async for event in graph_app.astream_events(

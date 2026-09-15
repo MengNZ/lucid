@@ -35,6 +35,10 @@ from tools.llm.cost_tracker import get_usage
 from tools.llm.cost_report import usage_to_dict
 
 
+# 并发跑 scenario 的上限（DeepSeek 限流 + 本机资源）。改成 1 等价于串行。
+EVAL_CONCURRENCY = 3
+
+
 # ─── 加载数据集 ───────────────────────────────────────
 
 def _load_dataset(path: str) -> list[dict]:
@@ -64,29 +68,94 @@ def _load_fact_cases() -> list[dict]:
 
 # ─── 跑一个场景 ───────────────────────────────────────
 
-def _run_scenario(scenario: dict) -> tuple[dict, dict]:
-    """跑一个场景。返回 (result, usage)。
+async def _run_scenario(scenario: dict, thread_id: str) -> dict:
+    """跑一个场景的 graph（异步），返回 result。
 
-    usage 是本次 run 的成本账本（get_usage），在 set_run_id(None) 前读出。
+    thread_id 由调用方（run_eval）生成，作为 MemorySaver/store 的隔离键。
     每个 scenario 用独立 store（内存库），隔离 facts/profiles 跨场景污染。
+    记账（set_run_id / get_usage）不在这里做，由 run_eval 统一开合——
+    这样 graph + 两个 judge 的 LLM 都记进同一个 scenario 的账本。
     """
     description = scenario["description"]
-    thread_id = f"eval-{scenario['id']}-{uuid.uuid4().hex[:6]}"
     config = {"configurable": {"thread_id": thread_id}}
 
     store = SqliteStore(":memory:")
     app = graph.compile(checkpointer=MemorySaver(), store=store)
 
-    set_run_id(thread_id)
-    try:
-        result = app.invoke(
-            {"messages": [HumanMessage(content=description)]},
-            config=config,
-        )
-    finally:
-        usage = get_usage()
-        set_run_id(None)
-    return result, usage
+    return await app.ainvoke(
+        {"messages": [HumanMessage(content=description)]},
+        config=config,
+    )
+
+
+async def _run_one_scenario(sc: dict, sem: asyncio.Semaphore, total: int, idx: int) -> dict:
+    """一个 scenario 的完整评估：RAG + graph + structure + coverage + correctness。
+
+    独立 task 内 set_run_id —— contextvar 是 task 局部的，gather 时各场景互不污染。
+    返回该 scenario 的结果 dict（含 cost），供 run_eval 汇总。
+    """
+    name = sc.get("name") or sc["id"]
+    diff = sc.get("difficulty", "?")
+    thread_id = f"eval-{sc['id']}-{uuid.uuid4().hex[:6]}"   # MemorySaver/store 隔离键
+    run_id = f"eval-{sc['id']}-{uuid.uuid4().hex[:8]}"      # 本轮运行键：日志 + 账本（随机，与 thread_id 解耦）
+
+    async with sem:                     # 限流：最多 sem 个场景同时跑
+        set_run_id(run_id)              # 开账本：graph + 两个 judge 的 LLM 都记这本
+        try:
+            print(f"\n{'─' * 40}")
+            print(f"[{idx}/{total}] {name} (difficulty={diff})")
+
+            # 2a. RAG
+            t0 = time.time()
+            rag = score_rag(sc)
+            print(f"  [RAG] recall@1={rag['recall_1']} recall@3={rag['recall_3']} "
+                  f"retrieved={rag['retrieved']} ({time.time()-t0:.1f}s)")
+
+            # 2b. Graph
+            t0 = time.time()
+            try:
+                result = await _run_scenario(sc, thread_id)
+                graph_ok = True
+            except Exception as e:
+                print(f"  [Graph] FAIL: {e}")
+                result = {"messages": [], "all_claims": [], "info_symmetry": {}, "contradictions": {}}
+                graph_ok = False
+            graph_time = time.time() - t0
+            print(f"  [Graph] {'OK' if graph_ok else 'FAIL'} ({graph_time:.1f}s)")
+
+            # 2c. Structure
+            structural = score_structure(result)
+            print(f"  [Struct] {structural['passed']}/{structural['total']} "
+                  f"({'OK' if structural['passed'] == structural['total'] else 'WARN'})")
+
+            # 2d. Coverage (LLM)
+            t0 = time.time()
+            coverage = await judge_coverage(sc, result)
+            print(f"  [Coverage] {coverage['score']} ({coverage.get('comment', '?')[:60]}) "
+                  f"({time.time()-t0:.1f}s)")
+
+            # 2e. Correctness (LLM)
+            t0 = time.time()
+            correctness = await judge_correctness(sc, result)
+            print(f"  [Correctness] {correctness['total']} "
+                  f"(dir={correctness['direction']} theory={correctness['theory_usage']} "
+                  f"action={correctness['actionable']}) ({time.time()-t0:.1f}s)")
+
+            usage = get_usage()         # 关账前读出总数
+            return {
+                "id": sc["id"],
+                "name": name,
+                "difficulty": diff,
+                "scores": {
+                    "rag": rag,
+                    "structural": structural,
+                    "coverage": coverage,
+                    "correctness": correctness,
+                },
+                "cost": usage_to_dict(usage) if usage and usage.nodes else None,
+            }
+        finally:
+            set_run_id(None)            # 关账本，防跨 scenario 累加
 
 
 # ─── 汇总 ─────────────────────────────────────────────
@@ -191,65 +260,13 @@ async def run_eval(dataset_path: str | None = None):
         return None
     print(f"  valid scenarios: {len(scenarios)}")
 
-    # 2. 逐场景评估
-    scenario_results = []
+    # 2. 并发评估（每个 scenario 一个 task，独立 store + 独立 run_id）
     total_start = time.time()
-
-    for i, sc in enumerate(scenarios, 1):
-        name = sc.get("name") or sc["id"]
-        diff = sc.get("difficulty", "?")
-        print(f"\n{'─' * 40}")
-        print(f"[{i}/{len(scenarios)}] {name} (difficulty={diff})")
-
-        # 2a. RAG
-        t0 = time.time()
-        rag = score_rag(sc)
-        print(f"  [RAG] recall@1={rag['recall_1']} recall@3={rag['recall_3']} "
-              f"retrieved={rag['retrieved']} ({time.time()-t0:.1f}s)")
-
-        # 2b. Graph
-        t0 = time.time()
-        try:
-            result, usage = _run_scenario(sc)
-            graph_ok = True
-        except Exception as e:
-            print(f"  [Graph] FAIL: {e}")
-            result = {"messages": [], "all_claims": [], "info_symmetry": {}, "contradictions": {}}
-            usage = None
-            graph_ok = False
-        graph_time = time.time() - t0
-        print(f"  [Graph] {'OK' if graph_ok else 'FAIL'} ({graph_time:.1f}s)")
-
-        # 2c. Structure
-        structural = score_structure(result)
-        print(f"  [Struct] {structural['passed']}/{structural['total']} "
-              f"({'OK' if structural['passed'] == structural['total'] else 'WARN'})")
-
-        # 2d. Coverage (LLM)
-        t0 = time.time()
-        coverage = await judge_coverage(sc, result)
-        print(f"  [Coverage] {coverage['score']} ({coverage.get('comment', '?')[:60]}) "
-              f"({time.time()-t0:.1f}s)")
-
-        # 2e. Correctness (LLM)
-        t0 = time.time()
-        correctness = await judge_correctness(sc, result)
-        print(f"  [Correctness] {correctness['total']} "
-              f"(dir={correctness['direction']} theory={correctness['theory_usage']} "
-              f"action={correctness['actionable']}) ({time.time()-t0:.1f}s)")
-
-        scenario_results.append({
-            "id": sc["id"],
-            "name": name,
-            "difficulty": diff,
-            "scores": {
-                "rag": rag,
-                "structural": structural,
-                "coverage": coverage,
-                "correctness": correctness,
-            },
-            "cost": usage_to_dict(usage) if usage and usage.nodes else None,
-        })
+    sem = asyncio.Semaphore(EVAL_CONCURRENCY)
+    scenario_results = await asyncio.gather(
+        *[_run_one_scenario(sc, sem, len(scenarios), i)
+          for i, sc in enumerate(scenarios, 1)]
+    )
 
     total_time = time.time() - total_start
 
