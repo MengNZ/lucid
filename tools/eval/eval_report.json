@@ -1,13 +1,87 @@
 {
-  "eval_date": "2026-07-23 02:16",
+  "eval_date": "2026-09-15 13:04",
   "summary": {
     "rag_recall_1_avg": 0.6,
     "rag_recall_3_avg": 0.93,
-    "structural_avg": 0.92,
-    "coverage_avg": 0.57,
-    "correctness_avg": 0.93,
-    "weighted_total": 0.84,
+    "structural_avg": 1.0,
+    "coverage_avg": 0.74,
+    "correctness_avg": 0.96,
+    "weighted_total": 0.91,
     "scenario_count": 10
+  },
+  "fact_rag": {
+    "summary": {
+      "recall_3_avg": 1.0,
+      "case_count": 3,
+      "evaluated": 3
+    },
+    "cases": [
+      {
+        "id": "f1",
+        "query_claim": "她最近是不是对我有点主动了",
+        "retrieved": [
+          "每天早上主动发早安",
+          "频繁邀约被拒",
+          "回复越来越慢"
+        ],
+        "relevant": [
+          "每天早上主动发早安"
+        ],
+        "recall_3": 1.0,
+        "hits": [
+          "每天早上主动发早安"
+        ],
+        "misses": []
+      },
+      {
+        "id": "f2",
+        "query_claim": "她是不是只把我当情绪垃圾桶",
+        "retrieved": [
+          "从不主动问我的事",
+          "开心时从不找我",
+          "深夜倾诉心事"
+        ],
+        "relevant": [
+          "开心时从不找我",
+          "深夜倾诉心事"
+        ],
+        "recall_3": 1.0,
+        "hits": [
+          "开心时从不找我",
+          "深夜倾诉心事"
+        ],
+        "misses": []
+      },
+      {
+        "id": "f3",
+        "query_claim": "他说的承诺到底算不算数",
+        "retrieved": [
+          "主动规划未来",
+          "答应周末见面却爽约",
+          "反复确认关系"
+        ],
+        "relevant": [
+          "答应周末见面却爽约"
+        ],
+        "recall_3": 1.0,
+        "hits": [
+          "答应周末见面却爽约"
+        ],
+        "misses": []
+      }
+    ]
+  },
+  "cost": {
+    "input_tokens": 263412,
+    "output_tokens": 152600,
+    "total_tokens": 416012,
+    "calls": 101,
+    "retries": 2,
+    "retry_tokens": 9489,
+    "latency_ms": 780563,
+    "retry_latency_ms": 17309,
+    "missing_usage": 0,
+    "retry_token_ratio": 0.02
   },
   "scenarios": [
     {
@@ -45,20 +119,20 @@
         },
         "coverage": {
           "covered_count": 2,
-          "missed_count": 1,
-          "comment": "基本归因错误和情境因素都覆盖充分，但\"区分行为与意图\"这个建议方向只擦边未明确展开——最终建议更多是区分感受与意图，而非行为与意图。",
-          "score": 0.67,
+          "missed_count": 0,
+          "comment": "分析已充分覆盖基本归因错误、情境替代解释，以及将单次未回复行为与不在乎的感情态度/意图区分开来的关键方向。",
+          "score": 1.0,
           "raw_response": {
-            "covered_count": 2,
-            "missed_count": 1,
-            "comment": "基本归因错误和情境因素都覆盖充分，但\"区分行为与意图\"这个建议方向只擦边未明确展开——最终建议更多是区分感受与意图，而非行为与意图。"
+            "covered_count": 3,
+            "missed_count": 0,
+            "comment": "分析已充分覆盖基本归因错误、情境替代解释，以及将单次未回复行为与不在乎的感情态度/意图区分开来的关键方向。"
           }
         },
         "correctness": {
           "direction": "A",
           "theory_usage": "A",
           "actionable": "A",
-          "comment": "准确识别基本归因错误和情绪推理双重偏差，理论运用扎实且结合场景展开，行动建议具体可执行，分析质量高。",
+          "comment": "分析准确锁定基本归因错误与情绪推理，区分行为与意图，并给出基线对比、低压力追问等具体可操作建议，方向与理论运用均到位。",
           "scores": {
             "direction": 1.0,
             "theory": 1.0,
@@ -69,13 +143,143 @@
             "direction": "A",
             "theory_usage": "A",
             "actionable": "A",
-            "comment": "准确识别基本归因错误和情绪推理双重偏差，理论运用扎实且结合场景展开，行动建议具体可执行，分析质量高。",
+            "comment": "分析准确锁定基本归因错误与情绪推理，区分行为与意图，并给出基线对比、低压力追问等具体可操作建议，方向与理论运用均到位。",
             "scores": {
               "direction": 1.0,
               "theory": 1.0,
               "actionable": 1.0
             }
           }
+        }
+      },
+      "cost": {
+        "nodes": {
+          "PREPROCESS": {
+            "calls": 1,
+            "input_tokens": 1896,
+            "output_tokens": 124,
+            "total_tokens": 2020,
+            "retries": 0,
+            "retry_input_tokens": 0,
+            "retry_output_tokens": 0,
+            "retry_tokens": 0,
+            "retry_token_ratio": 0.0,
+            "latency_ms": 1507,
+            "retry_latency_ms": 0,
+            "missing_usage": 0
+          },
+          "SIGNALS": {
+            "calls": 1,
+            "input_tokens": 3664,
+            "output_tokens": 943,
+            "total_tokens": 4607,
+            "retries": 0,
+            "retry_input_tokens": 0,
+            "retry_output_tokens": 0,
+            "retry_tokens": 0,
+            "retry_token_ratio": 0.0,
+            "latency_ms": 3886,
+            "retry_latency_ms": 0,
+            "missing_usage": 0
+          },
+          "INFO_SYMM": {
+            "calls": 1,
+            "input_tokens": 2064,
+            "output_tokens": 475,
+            "total_tokens": 2539,
+            "retries": 0,
+            "retry_input_tokens": 0,
+            "retry_output_tokens": 0,
+            "retry_tokens": 0,
+            "retry_token_ratio": 0.0,
+            "latency_ms": 2690,
+            "retry_latency_ms": 0,
+            "missing_usage": 0
+          },
+          "EVIDENCE": {
+            "calls": 1,
+            "input_tokens": 2502,
+            "output_tokens": 899,
+            "total_tokens": 3401,
+            "retries": 0,
+            "retry_input_tokens": 0,
+            "retry_output_tokens": 0,
+            "retry_tokens": 0,
+            "retry_token_ratio": 0.0,
+            "latency_ms": 4662,
+            "retry_latency_ms": 0,
+            "missing_usage": 0
+          },
+          "ALTERNATIVE": {
+            "calls": 1,
+            "input_tokens": 2932,
+            "output_tokens": 747,
+            "total_tokens": 3679,
+            "retries": 0,
+            "retry_input_tokens": 0,
+            "retry_output_tokens": 0,
+            "retry_tokens": 0,
+            "retry_token_ratio": 0.0,
+            "latency_ms": 4659,
+            "retry_latency_ms": 0,
+            "missing_usage": 0
+          },
+          "SUMMARY": {
+            "calls": 1,
+            "input_tokens": 839,
+            "output_tokens": 495,
+            "total_tokens": 1334,
+            "retries": 0,
+            "retry_input_tokens": 0,
+            "retry_output_tokens": 0,
+            "retry_tokens": 0,
+            "retry_token_ratio": 0.0,
+            "latency_ms": 3577,
+            "retry_latency_ms": 0,
+            "missing_usage": 0
+          },
+          "COVERAGE_JUDGE": {
+            "calls": 2,
+            "input_tokens": 2864,
+            "output_tokens": 1978,
+            "total_tokens": 4842,
+            "retries": 0,
+            "retry_input_tokens": 0,
+            "retry_output_tokens": 0,
+            "retry_tokens": 0,
+            "retry_token_ratio": 0.0,
+            "latency_ms": 11026,
+            "retry_latency_ms": 0,
+            "missing_usage": 0
+          },
+          "CORRECTNESS_JUDGE": {
+            "calls": 2,
+            "input_tokens": 3206,
+            "output_tokens": 415,
+            "total_tokens": 3621,
+            "retries": 0,
+            "retry_input_tokens": 0,
+            "retry_output_tokens": 0,
+            "retry_tokens": 0,
+            "retry_token_ratio": 0.0,
+            "latency_ms": 2906,
+            "retry_latency_ms": 0,
+            "missing_usage": 0
+          }
+        },
+        "total": {
+          "calls": 10,
+          "input_tokens": 19967,
+          "output_tokens": 6076,
+          "total_tokens": 26043,
+          "retries": 0,
+          "retry_input_tokens": 0,
+          "retry_output_tokens": 0,
+          "retry_tokens": 0,
+          "retry_token_ratio": 0.0,
+          "latency_ms": 34913,
+          "retry_latency_ms": 0,
+          "missing_usage": 0
         }
       }
     },
@@ -104,30 +308,30 @@
           "checks": {
             "graph_completed": true,
             "all_claims_have_evidence": true,
-            "all_claims_have_alternatives": false,
+            "all_claims_have_alternatives": true,
             "info_symmetry_produced": true,
             "contradictions_produced": true
           },
-          "passed": 4,
+          "passed": 5,
           "total": 5,
-          "score": 0.8
+          "score": 1.0
         },
         "coverage": {
           "covered_count": 2,
-          "missed_count": 4,
-          "comment": "最大缺口：完全没有讨论\"互惠规范的隐性记账\"这个核心认知偏差——用户认为\"我对ta好→ta该回报\"是一种隐性的情感记账，而joker只讨论了投射效应和表达方式差异，忽略了用户将日常关心视为\"投资\"并期待等价回报的互惠心理机制。",
-          "score": 0.33,
+          "missed_count": 2,
+          "comment": "分析覆盖了互惠规范的隐性记账和早安晚安未必被解读为'好'，但未充分讨论ta表达方式不同或没有同等感情的可能性，也未点明关键在回报方式可能不被理解或认可。",
+          "score": 0.5,
           "raw_response": {
             "covered_count": 2,
-            "missed_count": 3,
-            "comment": "最大缺口：完全没有讨论\"互惠规范的隐性记账\"这个核心认知偏差——用户认为\"我对ta好→ta该回报\"是一种隐性的情感记账，而joker只讨论了投射效应和表达方式差异，忽略了用户将日常关心视为\"投资\"并期待等价回报的互惠心理机制。"
+            "missed_count": 2,
+            "comment": "分析覆盖了互惠规范的隐性记账和早安晚安未必被解读为'好'，但未充分讨论ta表达方式不同或没有同等感情的可能性，也未点明关键在回报方式可能不被理解或认可。"
           }
         },
         "correctness": {
           "direction": "A",
           "theory_usage": "A",
           "actionable": "A",
-          "comment": "分析精准识别了情绪推理和投射效应两个核心认知偏差，理论运用深入且贴合场景，最终给出了可执行的3周观察方案，质量优秀。",
+          "comment": "分析准确抓住互惠规范的隐性记账核心，理论运用贴合场景，并给出三天停发测试等可操作建议，质量高。",
           "scores": {
             "direction": 1.0,
             "theory": 1.0,
@@ -138,13 +342,143 @@
             "direction": "A",
             "theory_usage": "A",
             "actionable": "A",
-            "comment": "分析精准识别了情绪推理和投射效应两个核心认知偏差，理论运用深入且贴合场景，最终给出了可执行的3周观察方案，质量优秀。",
+            "comment": "分析准确抓住互惠规范的隐性记账核心，理论运用贴合场景，并给出三天停发测试等可操作建议，质量高。",
             "scores": {
               "direction": 1.0,
               "theory": 1.0,
               "actionable": 1.0
             }
           }
+        }
+      },
+      "cost": {
+        "nodes": {
+          "PREPROCESS": {
+            "calls": 1,
+            "input_tokens": 1910,
+            "output_tokens": 341,
+            "total_tokens": 2251,
+            "retries": 0,
+            "retry_input_tokens": 0,
+            "retry_output_tokens": 0,
+            "retry_tokens": 0,
+            "retry_token_ratio": 0.0,
+            "latency_ms": 2131,
+            "retry_latency_ms": 0,
+            "missing_usage": 0
+          },
+          "SIGNALS": {
+            "calls": 1,
+            "input_tokens": 3678,
+            "output_tokens": 885,
+            "total_tokens": 4563,
+            "retries": 0,
+            "retry_input_tokens": 0,
+            "retry_output_tokens": 0,
+            "retry_tokens": 0,
+            "retry_token_ratio": 0.0,
+            "latency_ms": 4046,
+            "retry_latency_ms": 0,
+            "missing_usage": 0
+          },
+          "INFO_SYMM": {
+            "calls": 1,
+            "input_tokens": 2093,
+            "output_tokens": 272,
+            "total_tokens": 2365,
+            "retries": 0,
+            "retry_input_tokens": 0,
+            "retry_output_tokens": 0,
+            "retry_tokens": 0,
+            "retry_token_ratio": 0.0,
+            "latency_ms": 1836,
+            "retry_latency_ms": 0,
+            "missing_usage": 0
+          },
+          "EVIDENCE": {
+            "calls": 1,
+            "input_tokens": 2503,
+            "output_tokens": 824,
+            "total_tokens": 3327,
+            "retries": 0,
+            "retry_input_tokens": 0,
+            "retry_output_tokens": 0,
+            "retry_tokens": 0,
+            "retry_token_ratio": 0.0,
+            "latency_ms": 4855,
+            "retry_latency_ms": 0,
+            "missing_usage": 0
+          },
+          "ALTERNATIVE": {
+            "calls": 1,
+            "input_tokens": 2933,
+            "output_tokens": 1249,
+            "total_tokens": 4182,
+            "retries": 0,
+            "retry_input_tokens": 0,
+            "retry_output_tokens": 0,
+            "retry_tokens": 0,
+            "retry_token_ratio": 0.0,
+            "latency_ms": 7095,
+            "retry_latency_ms": 0,
+            "missing_usage": 0
+          },
+          "SUMMARY": {
+            "calls": 1,
+            "input_tokens": 954,
+            "output_tokens": 1316,
+            "total_tokens": 2270,
+            "retries": 0,
+            "retry_input_tokens": 0,
+            "retry_output_tokens": 0,
+            "retry_tokens": 0,
+            "retry_token_ratio": 0.0,
+            "latency_ms": 7342,
+            "retry_latency_ms": 0,
+            "missing_usage": 0
+          },
+          "COVERAGE_JUDGE": {
+            "calls": 2,
+            "input_tokens": 3354,
+            "output_tokens": 5605,
+            "total_tokens": 8959,
+            "retries": 0,
+            "retry_input_tokens": 0,
+            "retry_output_tokens": 0,
+            "retry_tokens": 0,
+            "retry_token_ratio": 0.0,
+            "latency_ms": 28513,
+            "retry_latency_ms": 0,
+            "missing_usage": 0
+          },
+          "CORRECTNESS_JUDGE": {
+            "calls": 2,
+            "input_tokens": 3696,
+            "output_tokens": 691,
+            "total_tokens": 4387,
+            "retries": 0,
+            "retry_input_tokens": 0,
+            "retry_output_tokens": 0,
+            "retry_tokens": 0,
+            "retry_token_ratio": 0.0,
+            "latency_ms": 4984,
+            "retry_latency_ms": 0,
+            "missing_usage": 0
+          }
+        },
+        "total": {
+          "calls": 10,
+          "input_tokens": 21121,
+          "output_tokens": 11183,
+          "total_tokens": 32304,
+          "retries": 0,
+          "retry_input_tokens": 0,
+          "retry_output_tokens": 0,
+          "retry_tokens": 0,
+          "retry_token_ratio": 0.0,
+          "latency_ms": 60802,
+          "retry_latency_ms": 0,
+          "missing_usage": 0
         }
       }
     },
@@ -182,21 +516,21 @@
           "score": 1.0
         },
         "coverage": {
-          "covered_count": 2,
-          "missed_count": 2,
-          "comment": "投射效应和替代解释（礼貌/便利）覆盖充分，但缺少一个明确的建议性框架来区分\"友好\"和\"恋爱好感\"，也没有明确指出\"一个微笑不足以区分两者\"这一关键结论。",
-          "score": 0.5,
+          "covered_count": 3,
+          "missed_count": 0,
+          "comment": "分析明确讨论了投射效应、友好/礼貌及恰好有空位等替代解释，并建议通过对比基线和主动测试区分友好与恋爱好感，三个关键方向均充分覆盖。",
+          "score": 1.0,
           "raw_response": {
-            "covered_count": 2,
-            "missed_count": 2,
-            "comment": "投射效应和替代解释（礼貌/便利）覆盖充分，但缺少一个明确的建议性框架来区分\"友好\"和\"恋爱好感\"，也没有明确指出\"一个微笑不足以区分两者\"这一关键结论。"
+            "covered_count": 3,
+            "missed_count": 0,
+            "comment": "分析明确讨论了投射效应、友好/礼貌及恰好有空位等替代解释，并建议通过对比基线和主动测试区分友好与恋爱好感，三个关键方向均充分覆盖。"
           }
         },
         "correctness": {
           "direction": "A",
           "theory_usage": "A",
           "actionable": "A",
-          "comment": "准确识别了投射效应和基本归因错误的核心认知偏差，理论运用恰当且深入，给出了具体可执行的信号清零测试，分析质量高。",
+          "comment": "分析准确识别投射效应与证据跳级，理论应用贴切，并给出可操作的对比基线和主动测试建议。",
           "scores": {
             "direction": 1.0,
             "theory": 1.0,
@@ -207,13 +541,143 @@
             "direction": "A",
             "theory_usage": "A",
             "actionable": "A",
-            "comment": "准确识别了投射效应和基本归因错误的核心认知偏差，理论运用恰当且深入，给出了具体可执行的信号清零测试，分析质量高。",
+            "comment": "分析准确识别投射效应与证据跳级，理论应用贴切，并给出可操作的对比基线和主动测试建议。",
             "scores": {
               "direction": 1.0,
               "theory": 1.0,
               "actionable": 1.0
             }
           }
+        }
+      },
+      "cost": {
+        "nodes": {
+          "PREPROCESS": {
+            "calls": 1,
+            "input_tokens": 1900,
+            "output_tokens": 339,
+            "total_tokens": 2239,
+            "retries": 0,
+            "retry_input_tokens": 0,
+            "retry_output_tokens": 0,
+            "retry_tokens": 0,
+            "retry_token_ratio": 0.0,
+            "latency_ms": 1907,
+            "retry_latency_ms": 0,
+            "missing_usage": 0
+          },
+          "SIGNALS": {
+            "calls": 1,
+            "input_tokens": 3668,
+            "output_tokens": 5231,
+            "total_tokens": 8899,
+            "retries": 0,
+            "retry_input_tokens": 0,
+            "retry_output_tokens": 0,
+            "retry_tokens": 0,
+            "retry_token_ratio": 0.0,
+            "latency_ms": 23235,
+            "retry_latency_ms": 0,
+            "missing_usage": 0
+          },
+          "INFO_SYMM": {
+            "calls": 1,
+            "input_tokens": 2056,
+            "output_tokens": 195,
+            "total_tokens": 2251,
+            "retries": 0,
+            "retry_input_tokens": 0,
+            "retry_output_tokens": 0,
+            "retry_tokens": 0,
+            "retry_token_ratio": 0.0,
+            "latency_ms": 1354,
+            "retry_latency_ms": 0,
+            "missing_usage": 0
+          },
+          "ALTERNATIVE": {
+            "calls": 1,
+            "input_tokens": 2918,
+            "output_tokens": 917,
+            "total_tokens": 3835,
+            "retries": 0,
+            "retry_input_tokens": 0,
+            "retry_output_tokens": 0,
+            "retry_tokens": 0,
+            "retry_token_ratio": 0.0,
+            "latency_ms": 5667,
+            "retry_latency_ms": 0,
+            "missing_usage": 0
+          },
+          "EVIDENCE": {
+            "calls": 1,
+            "input_tokens": 2488,
+            "output_tokens": 1229,
+            "total_tokens": 3717,
+            "retries": 0,
+            "retry_input_tokens": 0,
+            "retry_output_tokens": 0,
+            "retry_tokens": 0,
+            "retry_token_ratio": 0.0,
+            "latency_ms": 6182,
+            "retry_latency_ms": 0,
+            "missing_usage": 0
+          },
+          "SUMMARY": {
+            "calls": 1,
+            "input_tokens": 1148,
+            "output_tokens": 944,
+            "total_tokens": 2092,
+            "retries": 0,
+            "retry_input_tokens": 0,
+            "retry_output_tokens": 0,
+            "retry_tokens": 0,
+            "retry_token_ratio": 0.0,
+            "latency_ms": 6139,
+            "retry_latency_ms": 0,
+            "missing_usage": 0
+          },
+          "COVERAGE_JUDGE": {
+            "calls": 2,
+            "input_tokens": 4448,
+            "output_tokens": 1637,
+            "total_tokens": 6085,
+            "retries": 0,
+            "retry_input_tokens": 0,
+            "retry_output_tokens": 0,
+            "retry_tokens": 0,
+            "retry_token_ratio": 0.0,
+            "latency_ms": 9366,
+            "retry_latency_ms": 0,
+            "missing_usage": 0
+          },
+          "CORRECTNESS_JUDGE": {
+            "calls": 2,
+            "input_tokens": 4790,
+            "output_tokens": 669,
+            "total_tokens": 5459,
+            "retries": 0,
+            "retry_input_tokens": 0,
+            "retry_output_tokens": 0,
+            "retry_tokens": 0,
+            "retry_token_ratio": 0.0,
+            "latency_ms": 4554,
+            "retry_latency_ms": 0,
+            "missing_usage": 0
+          }
+        },
+        "total": {
+          "calls": 10,
+          "input_tokens": 23416,
+          "output_tokens": 11161,
+          "total_tokens": 34577,
+          "retries": 0,
+          "retry_input_tokens": 0,
+          "retry_output_tokens": 0,
+          "retry_tokens": 0,
+          "retry_token_ratio": 0.0,
+          "latency_ms": 58404,
+          "retry_latency_ms": 0,
+          "missing_usage": 0
         }
       }
     },
@@ -252,37 +716,167 @@
         },
         "coverage": {
           "covered_count": 2,
-          "missed_count": 0,
-          "comment": "三个关键方向全部覆盖，且每个点都有充分展开讨论。joker 的分析非常全面，情绪推理、替代解释、行动建议三个维度都处理到位。",
-          "score": 1.0,
+          "missed_count": 1,
+          "comment": "情绪推理和替代原因覆盖充分，但缺少建议直接向ta确认（如问'你今天是不是心情不太好'）这一关键方向。",
+          "score": 0.67,
           "raw_response": {
-            "covered_count": 3,
-            "missed_count": 0,
-            "comment": "三个关键方向全部覆盖，且每个点都有充分展开讨论。joker 的分析非常全面，情绪推理、替代解释、行动建议三个维度都处理到位。"
+            "covered_count": 2,
+            "missed_count": 1,
+            "comment": "情绪推理和替代原因覆盖充分，但缺少建议直接向ta确认（如问'你今天是不是心情不太好'）这一关键方向。"
           }
         },
         "correctness": {
-          "direction": "A",
+          "direction": "B",
           "theory_usage": "A",
           "actionable": "A",
-          "comment": "分析准确识别了情绪推理这一核心认知偏差，理论运用扎实且结合场景展开，行动建议具体可执行，整体质量高。",
+          "comment": "核心机制抓得准（情绪推理+基本归因错误，替代解释与'信息不足先别下结论'的建议都到位），但Claim 2把用户原话'ta在生我的气'误读成'ta在生自己的气'（如'ta是否说过自责的话'），且行动建议偏向间接观察，漏掉了最直接的确认方式（直接问一句'你今天是不是心情不太好'），方向大体正确但有实质瑕疵。",
           "scores": {
-            "direction": 1.0,
+            "direction": 0.8,
             "theory": 1.0,
             "actionable": 1.0
           },
-          "total": 1.0,
+          "total": 0.93,
           "raw_response": {
-            "direction": "A",
+            "direction": "B",
             "theory_usage": "A",
             "actionable": "A",
-            "comment": "分析准确识别了情绪推理这一核心认知偏差，理论运用扎实且结合场景展开，行动建议具体可执行，整体质量高。",
+            "comment": "核心机制抓得准（情绪推理+基本归因错误，替代解释与'信息不足先别下结论'的建议都到位），但Claim 2把用户原话'ta在生我的气'误读成'ta在生自己的气'（如'ta是否说过自责的话'），且行动建议偏向间接观察，漏掉了最直接的确认方式（直接问一句'你今天是不是心情不太好'），方向大体正确但有实质瑕疵。",
             "scores": {
-              "direction": 1.0,
+              "direction": 0.6,
               "theory": 1.0,
               "actionable": 1.0
             }
           }
+        }
+      },
+      "cost": {
+        "nodes": {
+          "PREPROCESS": {
+            "calls": 1,
+            "input_tokens": 1907,
+            "output_tokens": 298,
+            "total_tokens": 2205,
+            "retries": 0,
+            "retry_input_tokens": 0,
+            "retry_output_tokens": 0,
+            "retry_tokens": 0,
+            "retry_token_ratio": 0.0,
+            "latency_ms": 1505,
+            "retry_latency_ms": 0,
+            "missing_usage": 0
+          },
+          "SIGNALS": {
+            "calls": 1,
+            "input_tokens": 3675,
+            "output_tokens": 4217,
+            "total_tokens": 7892,
+            "retries": 0,
+            "retry_input_tokens": 0,
+            "retry_output_tokens": 0,
+            "retry_tokens": 0,
+            "retry_token_ratio": 0.0,
+            "latency_ms": 18832,
+            "retry_latency_ms": 0,
+            "missing_usage": 0
+          },
+          "ALTERNATIVE": {
+            "calls": 1,
+            "input_tokens": 3001,
+            "output_tokens": 1199,
+            "total_tokens": 4200,
+            "retries": 0,
+            "retry_input_tokens": 0,
+            "retry_output_tokens": 0,
+            "retry_tokens": 0,
+            "retry_token_ratio": 0.0,
+            "latency_ms": 6361,
+            "retry_latency_ms": 0,
+            "missing_usage": 0
+          },
+          "INFO_SYMM": {
+            "calls": 1,
+            "input_tokens": 2075,
+            "output_tokens": 1399,
+            "total_tokens": 3474,
+            "retries": 0,
+            "retry_input_tokens": 0,
+            "retry_output_tokens": 0,
+            "retry_tokens": 0,
+            "retry_token_ratio": 0.0,
+            "latency_ms": 7323,
+            "retry_latency_ms": 0,
+            "missing_usage": 0
+          },
+          "EVIDENCE": {
+            "calls": 1,
+            "input_tokens": 2571,
+            "output_tokens": 1743,
+            "total_tokens": 4314,
+            "retries": 0,
+            "retry_input_tokens": 0,
+            "retry_output_tokens": 0,
+            "retry_tokens": 0,
+            "retry_token_ratio": 0.0,
+            "latency_ms": 8033,
+            "retry_latency_ms": 0,
+            "missing_usage": 0
+          },
+          "SUMMARY": {
+            "calls": 1,
+            "input_tokens": 951,
+            "output_tokens": 1455,
+            "total_tokens": 2406,
+            "retries": 0,
+            "retry_input_tokens": 0,
+            "retry_output_tokens": 0,
+            "retry_tokens": 0,
+            "retry_token_ratio": 0.0,
+            "latency_ms": 8226,
+            "retry_latency_ms": 0,
+            "missing_usage": 0
+          },
+          "COVERAGE_JUDGE": {
+            "calls": 2,
+            "input_tokens": 3440,
+            "output_tokens": 1892,
+            "total_tokens": 5332,
+            "retries": 0,
+            "retry_input_tokens": 0,
+            "retry_output_tokens": 0,
+            "retry_tokens": 0,
+            "retry_token_ratio": 0.0,
+            "latency_ms": 9864,
+            "retry_latency_ms": 0,
+            "missing_usage": 0
+          },
+          "CORRECTNESS_JUDGE": {
+            "calls": 2,
+            "input_tokens": 3782,
+            "output_tokens": 5258,
+            "total_tokens": 9040,
+            "retries": 0,
+            "retry_input_tokens": 0,
+            "retry_output_tokens": 0,
+            "retry_tokens": 0,
+            "retry_token_ratio": 0.0,
+            "latency_ms": 27851,
+            "retry_latency_ms": 0,
+            "missing_usage": 0
+          }
+        },
+        "total": {
+          "calls": 10,
+          "input_tokens": 21402,
+          "output_tokens": 17461,
+          "total_tokens": 38863,
+          "retries": 0,
+          "retry_input_tokens": 0,
+          "retry_output_tokens": 0,
+          "retry_tokens": 0,
+          "retry_token_ratio": 0.0,
+          "latency_ms": 87995,
+          "retry_latency_ms": 0,
+          "missing_usage": 0
         }
       }
     },
@@ -320,38 +914,154 @@
           "score": 1.0
         },
         "coverage": {
-          "covered_count": 3,
+          "covered_count": 2,
           "missed_count": 2,
-          "comment": "最明显的缺口：joker 没有明确将\"性格不合\"与\"投入很多\"之间的认知冲突作为核心框架来讨论，也没有指出用户是在改变\"性格不合\"这个认知来合理化坚持——而这恰恰是用户困境的心理机制核心。",
-          "score": 0.6,
+          "comment": "认知失调与沉没成本有覆盖，但未展开'未来代价 vs 过去投入'的核心权衡，也未给出'若今天才认识ta还会开始吗'的反事实自问。",
+          "score": 0.5,
           "raw_response": {
-            "covered_count": 3,
+            "covered_count": 2,
             "missed_count": 2,
-            "comment": "最明显的缺口：joker 没有明确将\"性格不合\"与\"投入很多\"之间的认知冲突作为核心框架来讨论，也没有指出用户是在改变\"性格不合\"这个认知来合理化坚持——而这恰恰是用户困境的心理机制核心。"
+            "comment": "认知失调与沉没成本有覆盖，但未展开'未来代价 vs 过去投入'的核心权衡，也未给出'若今天才认识ta还会开始吗'的反事实自问。"
           }
         },
         "correctness": {
-          "direction": "B",
+          "direction": "A",
           "theory_usage": "A",
           "actionable": "A",
-          "comment": "方向大致正确，但Claim 1过度纠结于'性格不合是否成立'而非聚焦认知失调的冲突机制，略有偏离；理论运用准确且深入；最终回复的行动建议具体可操作。",
+          "comment": "准确识别了认知失调与沉没成本这一核心机制，理论应用贴合场景，并给出了7天记录具体事件等可操作建议；唯略欠'若是今天才认识ta还会开始吗'这一关键复盘提问，但整体方向与深度均达标。",
           "scores": {
-            "direction": 0.8,
+            "direction": 1.0,
             "theory": 1.0,
             "actionable": 1.0
           },
-          "total": 0.93,
+          "total": 1.0,
           "raw_response": {
-            "direction": "B",
+            "direction": "A",
             "theory_usage": "A",
             "actionable": "A",
-            "comment": "方向大致正确，但Claim 1过度纠结于'性格不合是否成立'而非聚焦认知失调的冲突机制，略有偏离；理论运用准确且深入；最终回复的行动建议具体可操作。",
+            "comment": "准确识别了认知失调与沉没成本这一核心机制，理论应用贴合场景，并给出了7天记录具体事件等可操作建议；唯略欠'若是今天才认识ta还会开始吗'这一关键复盘提问，但整体方向与深度均达标。",
             "scores": {
-              "direction": 0.6,
+              "direction": 1.0,
               "theory": 1.0,
               "actionable": 1.0
             }
           }
+        }
+      },
+      "cost": {
+        "nodes": {
+          "PREPROCESS": {
+            "calls": 1,
+            "input_tokens": 1929,
+            "output_tokens": 1023,
+            "total_tokens": 2952,
+            "retries": 0,
+            "retry_input_tokens": 0,
+            "retry_output_tokens": 0,
+            "retry_tokens": 0,
+            "retry_token_ratio": 0.0,
+            "latency_ms": 4767,
+            "retry_latency_ms": 0,
+            "missing_usage": 0
+          },
+          "INFO_SYMM": {
+            "calls": 1,
+            "input_tokens": 1848,
+            "output_tokens": 873,
+            "total_tokens": 2721,
+            "retries": 0,
+            "retry_input_tokens": 0,
+            "retry_output_tokens": 0,
+            "retry_tokens": 0,
+            "retry_token_ratio": 0.0,
+            "latency_ms": 3954,
+            "retry_latency_ms": 0,
+            "missing_usage": 0
+          },
+          "EVIDENCE": {
+            "calls": 2,
+            "input_tokens": 4949,
+            "output_tokens": 2922,
+            "total_tokens": 7871,
+            "retries": 1,
+            "retry_input_tokens": 2570,
+            "retry_output_tokens": 1103,
+            "retry_tokens": 3673,
+            "retry_token_ratio": 0.47,
+            "latency_ms": 13474,
+            "retry_latency_ms": 5106,
+            "missing_usage": 0
+          },
+          "ALTERNATIVE": {
+            "calls": 1,
+            "input_tokens": 2809,
+            "output_tokens": 2185,
+            "total_tokens": 4994,
+            "retries": 0,
+            "retry_input_tokens": 0,
+            "retry_output_tokens": 0,
+            "retry_tokens": 0,
+            "retry_token_ratio": 0.0,
+            "latency_ms": 12671,
+            "retry_latency_ms": 0,
+            "missing_usage": 0
+          },
+          "SUMMARY": {
+            "calls": 1,
+            "input_tokens": 1659,
+            "output_tokens": 838,
+            "total_tokens": 2497,
+            "retries": 0,
+            "retry_input_tokens": 0,
+            "retry_output_tokens": 0,
+            "retry_tokens": 0,
+            "retry_token_ratio": 0.0,
+            "latency_ms": 5389,
+            "retry_latency_ms": 0,
+            "missing_usage": 0
+          },
+          "COVERAGE_JUDGE": {
+            "calls": 2,
+            "input_tokens": 6468,
+            "output_tokens": 2771,
+            "total_tokens": 9239,
+            "retries": 0,
+            "retry_input_tokens": 0,
+            "retry_output_tokens": 0,
+            "retry_tokens": 0,
+            "retry_token_ratio": 0.0,
+            "latency_ms": 14430,
+            "retry_latency_ms": 0,
+            "missing_usage": 0
+          },
+          "CORRECTNESS_JUDGE": {
+            "calls": 2,
+            "input_tokens": 6810,
+            "output_tokens": 988,
+            "total_tokens": 7798,
+            "retries": 0,
+            "retry_input_tokens": 0,
+            "retry_output_tokens": 0,
+            "retry_tokens": 0,
+            "retry_token_ratio": 0.0,
+            "latency_ms": 6021,
+            "retry_latency_ms": 0,
+            "missing_usage": 0
+          }
+        },
+        "total": {
+          "calls": 10,
+          "input_tokens": 26472,
+          "output_tokens": 11600,
+          "total_tokens": 38072,
+          "retries": 1,
+          "retry_input_tokens": 2570,
+          "retry_output_tokens": 1103,
+          "retry_tokens": 3673,
+          "retry_token_ratio": 0.1,
+          "latency_ms": 60706,
+          "retry_latency_ms": 5106,
+          "missing_usage": 0
         }
       }
     },
@@ -380,47 +1090,177 @@
           "checks": {
             "graph_completed": true,
             "all_claims_have_evidence": true,
-            "all_claims_have_alternatives": false,
+            "all_claims_have_alternatives": true,
             "info_symmetry_produced": true,
             "contradictions_produced": true
           },
-          "passed": 4,
+          "passed": 5,
           "total": 5,
-          "score": 0.8
+          "score": 1.0
         },
         "coverage": {
-          "covered_count": 2,
-          "missed_count": 4,
-          "comment": "最明显的缺口：joker完全没有做\"前任行为vs现任行为\"的客观对比分析，也没有指出\"用同样的预设对待不同的人会形成自我实现预言\"这一关键提醒。分析停留在提供替代解释层面，但缺少对创伤记忆激活机制和认知偏差的命名与结构化拆解。",
-          "score": 0.33,
+          "covered_count": 3,
+          "missed_count": 2,
+          "comment": "分析覆盖了可得性记忆激活和用前任模板衡量现任，但缺失客观对比现任与前任行为、评估现任独立可信度证据、以及‘现任不是前任/自我实现预言’的提醒。",
+          "score": 0.6,
           "raw_response": {
-            "covered_count": 1,
-            "missed_count": 4,
-            "comment": "最明显的缺口：joker完全没有做\"前任行为vs现任行为\"的客观对比分析，也没有指出\"用同样的预设对待不同的人会形成自我实现预言\"这一关键提醒。分析停留在提供替代解释层面，但缺少对创伤记忆激活机制和认知偏差的命名与结构化拆解。"
+            "covered_count": 2,
+            "missed_count": 3,
+            "comment": "分析覆盖了可得性记忆激活和用前任模板衡量现任，但缺失客观对比现任与前任行为、评估现任独立可信度证据、以及‘现任不是前任/自我实现预言’的提醒。"
           }
         },
         "correctness": {
           "direction": "A",
           "theory_usage": "A",
-          "actionable": "B",
-          "comment": "核心方向正确，准确识别了创伤投射和情绪推理偏差；理论运用恰当（情绪推理、基本归因错误、认知失调）；可操作性方面最终给出了具体建议但中间分析偏解释性。扣分点：将用户陈述的前任事实当作需要验证的claim来处理不太合理。",
+          "actionable": "A",
+          "comment": "核心机制（可得性启发+情绪推理+焦虑型依恋）识别准确，区分单次延迟与重复模式并给出具体行动，仅未点明'用前任尺子量现任会成自我实现预言'这一维度。",
           "scores": {
             "direction": 1.0,
             "theory": 1.0,
-            "actionable": 0.75
+            "actionable": 1.0
           },
-          "total": 0.92,
+          "total": 1.0,
           "raw_response": {
             "direction": "A",
             "theory_usage": "A",
-            "actionable": "B",
-            "comment": "核心方向正确，准确识别了创伤投射和情绪推理偏差；理论运用恰当（情绪推理、基本归因错误、认知失调）；可操作性方面最终给出了具体建议但中间分析偏解释性。扣分点：将用户陈述的前任事实当作需要验证的claim来处理不太合理。",
+            "actionable": "A",
+            "comment": "核心机制（可得性启发+情绪推理+焦虑型依恋）识别准确，区分单次延迟与重复模式并给出具体行动，仅未点明'用前任尺子量现任会成自我实现预言'这一维度。",
             "scores": {
               "direction": 1.0,
               "theory": 1.0,
-              "actionable": 0.5
+              "actionable": 1.0
             }
           }
+        }
+      },
+      "cost": {
+        "nodes": {
+          "PREPROCESS": {
+            "calls": 1,
+            "input_tokens": 1940,
+            "output_tokens": 1639,
+            "total_tokens": 3579,
+            "retries": 0,
+            "retry_input_tokens": 0,
+            "retry_output_tokens": 0,
+            "retry_tokens": 0,
+            "retry_token_ratio": 0.0,
+            "latency_ms": 7275,
+            "retry_latency_ms": 0,
+            "missing_usage": 0
+          },
+          "SIGNALS": {
+            "calls": 1,
+            "input_tokens": 3708,
+            "output_tokens": 2231,
+            "total_tokens": 5939,
+            "retries": 0,
+            "retry_input_tokens": 0,
+            "retry_output_tokens": 0,
+            "retry_tokens": 0,
+            "retry_token_ratio": 0.0,
+            "latency_ms": 10522,
+            "retry_latency_ms": 0,
+            "missing_usage": 0
+          },
+          "INFO_SYMM": {
+            "calls": 1,
+            "input_tokens": 2137,
+            "output_tokens": 539,
+            "total_tokens": 2676,
+            "retries": 0,
+            "retry_input_tokens": 0,
+            "retry_output_tokens": 0,
+            "retry_tokens": 0,
+            "retry_token_ratio": 0.0,
+            "latency_ms": 3171,
+            "retry_latency_ms": 0,
+            "missing_usage": 0
+          },
+          "EVIDENCE": {
+            "calls": 1,
+            "input_tokens": 2650,
+            "output_tokens": 1534,
+            "total_tokens": 4184,
+            "retries": 0,
+            "retry_input_tokens": 0,
+            "retry_output_tokens": 0,
+            "retry_tokens": 0,
+            "retry_token_ratio": 0.0,
+            "latency_ms": 7697,
+            "retry_latency_ms": 0,
+            "missing_usage": 0
+          },
+          "ALTERNATIVE": {
+            "calls": 1,
+            "input_tokens": 3080,
+            "output_tokens": 2292,
+            "total_tokens": 5372,
+            "retries": 0,
+            "retry_input_tokens": 0,
+            "retry_output_tokens": 0,
+            "retry_tokens": 0,
+            "retry_token_ratio": 0.0,
+            "latency_ms": 12822,
+            "retry_latency_ms": 0,
+            "missing_usage": 0
+          },
+          "SUMMARY": {
+            "calls": 1,
+            "input_tokens": 1244,
+            "output_tokens": 1240,
+            "total_tokens": 2484,
+            "retries": 0,
+            "retry_input_tokens": 0,
+            "retry_output_tokens": 0,
+            "retry_tokens": 0,
+            "retry_token_ratio": 0.0,
+            "latency_ms": 7162,
+            "retry_latency_ms": 0,
+            "missing_usage": 0
+          },
+          "COVERAGE_JUDGE": {
+            "calls": 2,
+            "input_tokens": 4942,
+            "output_tokens": 7740,
+            "total_tokens": 12682,
+            "retries": 0,
+            "retry_input_tokens": 0,
+            "retry_output_tokens": 0,
+            "retry_tokens": 0,
+            "retry_token_ratio": 0.0,
+            "latency_ms": 36461,
+            "retry_latency_ms": 0,
+            "missing_usage": 0
+          },
+          "CORRECTNESS_JUDGE": {
+            "calls": 2,
+            "input_tokens": 5284,
+            "output_tokens": 3654,
+            "total_tokens": 8938,
+            "retries": 0,
+            "retry_input_tokens": 0,
+            "retry_output_tokens": 0,
+            "retry_tokens": 0,
+            "retry_token_ratio": 0.0,
+            "latency_ms": 20217,
+            "retry_latency_ms": 0,
+            "missing_usage": 0
+          }
+        },
+        "total": {
+          "calls": 10,
+          "input_tokens": 24985,
+          "output_tokens": 20869,
+          "total_tokens": 45854,
+          "retries": 0,
+          "retry_input_tokens": 0,
+          "retry_output_tokens": 0,
+          "retry_tokens": 0,
+          "retry_token_ratio": 0.0,
+          "latency_ms": 105327,
+          "retry_latency_ms": 0,
+          "missing_usage": 0
         }
       }
     },
@@ -458,38 +1298,168 @@
           "score": 1.0
         },
         "coverage": {
-          "covered_count": 0,
-          "missed_count": 6,
-          "comment": "最大的缺口：joker 完全没识别出\"焦虑型依恋\"这个核心框架，也没有将打五个电话定义为\"抗议行为\"，更没有给出任何针对焦虑发作的即时应对建议（如延迟反应）。整个分析停留在认知偏差层面，缺少依恋理论视角和可操作的行为干预。",
-          "score": 0.0,
+          "covered_count": 4,
+          "missed_count": 2,
+          "comment": "分析覆盖了焦虑型依恋模式、过度确认导致恶性循环及延迟反应建议，但未充分展开'打五个电话是抗议行为/寻求安全感'，且完全缺失与ta坦诚表达需求的建议。",
+          "score": 0.67,
           "raw_response": {
-            "covered_count": 0,
-            "missed_count": 6,
-            "comment": "最大的缺口：joker 完全没识别出\"焦虑型依恋\"这个核心框架，也没有将打五个电话定义为\"抗议行为\"，更没有给出任何针对焦虑发作的即时应对建议（如延迟反应）。整个分析停留在认知偏差层面，缺少依恋理论视角和可操作的行为干预。"
+            "covered_count": 4,
+            "missed_count": 2,
+            "comment": "分析覆盖了焦虑型依恋模式、过度确认导致恶性循环及延迟反应建议，但未充分展开'打五个电话是抗议行为/寻求安全感'，且完全缺失与ta坦诚表达需求的建议。"
           }
         },
         "correctness": {
-          "direction": "B",
+          "direction": "A",
           "theory_usage": "A",
           "actionable": "A",
-          "comment": "认知偏差分析扎实、理论运用准确、建议具体，但遗漏了焦虑型依恋这一核心框架，未识别'抗议行为'的典型模式",
+          "comment": "分析准确识别焦虑型依恋、情绪推理与升级求证循环，理论应用扎实，并给出了延迟规则和事实核查等可操作建议。",
           "scores": {
-            "direction": 0.6,
-            "theory": 0.75,
-            "actionable": 0.75
+            "direction": 1.0,
+            "theory": 1.0,
+            "actionable": 1.0
           },
-          "total": 0.7,
+          "total": 1.0,
           "raw_response": {
-            "direction": "B",
+            "direction": "A",
             "theory_usage": "A",
             "actionable": "A",
-            "comment": "认知偏差分析扎实、理论运用准确、建议具体，但遗漏了焦虑型依恋这一核心框架，未识别'抗议行为'的典型模式",
+            "comment": "分析准确识别焦虑型依恋、情绪推理与升级求证循环，理论应用扎实，并给出了延迟规则和事实核查等可操作建议。",
             "scores": {
-              "direction": 0.6,
+              "direction": 1.0,
               "theory": 1.0,
               "actionable": 1.0
             }
           }
+        }
+      },
+      "cost": {
+        "nodes": {
+          "PREPROCESS": {
+            "calls": 1,
+            "input_tokens": 1951,
+            "output_tokens": 579,
+            "total_tokens": 2530,
+            "retries": 0,
+            "retry_input_tokens": 0,
+            "retry_output_tokens": 0,
+            "retry_tokens": 0,
+            "retry_token_ratio": 0.0,
+            "latency_ms": 3426,
+            "retry_latency_ms": 0,
+            "missing_usage": 0
+          },
+          "SIGNALS": {
+            "calls": 1,
+            "input_tokens": 3719,
+            "output_tokens": 2304,
+            "total_tokens": 6023,
+            "retries": 0,
+            "retry_input_tokens": 0,
+            "retry_output_tokens": 0,
+            "retry_tokens": 0,
+            "retry_token_ratio": 0.0,
+            "latency_ms": 10230,
+            "retry_latency_ms": 0,
+            "missing_usage": 0
+          },
+          "INFO_SYMM": {
+            "calls": 1,
+            "input_tokens": 2261,
+            "output_tokens": 413,
+            "total_tokens": 2674,
+            "retries": 0,
+            "retry_input_tokens": 0,
+            "retry_output_tokens": 0,
+            "retry_tokens": 0,
+            "retry_token_ratio": 0.0,
+            "latency_ms": 2067,
+            "retry_latency_ms": 0,
+            "missing_usage": 0
+          },
+          "EVIDENCE": {
+            "calls": 1,
+            "input_tokens": 2777,
+            "output_tokens": 1923,
+            "total_tokens": 4700,
+            "retries": 0,
+            "retry_input_tokens": 0,
+            "retry_output_tokens": 0,
+            "retry_tokens": 0,
+            "retry_token_ratio": 0.0,
+            "latency_ms": 9209,
+            "retry_latency_ms": 0,
+            "missing_usage": 0
+          },
+          "ALTERNATIVE": {
+            "calls": 1,
+            "input_tokens": 3207,
+            "output_tokens": 1799,
+            "total_tokens": 5006,
+            "retries": 0,
+            "retry_input_tokens": 0,
+            "retry_output_tokens": 0,
+            "retry_tokens": 0,
+            "retry_token_ratio": 0.0,
+            "latency_ms": 9519,
+            "retry_latency_ms": 0,
+            "missing_usage": 0
+          },
+          "SUMMARY": {
+            "calls": 1,
+            "input_tokens": 1764,
+            "output_tokens": 398,
+            "total_tokens": 2162,
+            "retries": 0,
+            "retry_input_tokens": 0,
+            "retry_output_tokens": 0,
+            "retry_tokens": 0,
+            "retry_token_ratio": 0.0,
+            "latency_ms": 2906,
+            "retry_latency_ms": 0,
+            "missing_usage": 0
+          },
+          "COVERAGE_JUDGE": {
+            "calls": 2,
+            "input_tokens": 7662,
+            "output_tokens": 6203,
+            "total_tokens": 13865,
+            "retries": 0,
+            "retry_input_tokens": 0,
+            "retry_output_tokens": 0,
+            "retry_tokens": 0,
+            "retry_token_ratio": 0.0,
+            "latency_ms": 29943,
+            "retry_latency_ms": 0,
+            "missing_usage": 0
+          },
+          "CORRECTNESS_JUDGE": {
+            "calls": 2,
+            "input_tokens": 8004,
+            "output_tokens": 1227,
+            "total_tokens": 9231,
+            "retries": 0,
+            "retry_input_tokens": 0,
+            "retry_output_tokens": 0,
+            "retry_tokens": 0,
+            "retry_token_ratio": 0.0,
+            "latency_ms": 7559,
+            "retry_latency_ms": 0,
+            "missing_usage": 0
+          }
+        },
+        "total": {
+          "calls": 10,
+          "input_tokens": 31345,
+          "output_tokens": 14846,
+          "total_tokens": 46191,
+          "retries": 0,
+          "retry_input_tokens": 0,
+          "retry_output_tokens": 0,
+          "retry_tokens": 0,
+          "retry_token_ratio": 0.0,
+          "latency_ms": 74859,
+          "retry_latency_ms": 0,
+          "missing_usage": 0
         }
       }
     },
@@ -527,21 +1497,21 @@
           "score": 1.0
         },
         "coverage": {
-          "covered_count": 3,
-          "missed_count": 2,
-          "comment": "joker充分覆盖了回避型依恋的理论解释和\"不在乎\"的误判，但缺失了两个关键行动建议：①不要在冲突压力时谈未来，②用\"一起做某件事\"替代\"谈一谈\"来建立连接。",
-          "score": 0.6,
+          "covered_count": 4,
+          "missed_count": 1,
+          "comment": "回避型依恋、误判、建议①③覆盖充分，但未明确讨论'不要在有冲突压力时谈未来'这一时机建议。",
+          "score": 0.8,
           "raw_response": {
-            "covered_count": 3,
-            "missed_count": 2,
-            "comment": "joker充分覆盖了回避型依恋的理论解释和\"不在乎\"的误判，但缺失了两个关键行动建议：①不要在冲突压力时谈未来，②用\"一起做某件事\"替代\"谈一谈\"来建立连接。"
+            "covered_count": 4,
+            "missed_count": 1,
+            "comment": "回避型依恋、误判、建议①③覆盖充分，但未明确讨论'不要在有冲突压力时谈未来'这一时机建议。"
           }
         },
         "correctness": {
           "direction": "A",
           "theory_usage": "A",
           "actionable": "A",
-          "comment": "高质量分析：准确识别了用户将回避行为等同于不在乎的核心认知偏差，运用回避型依恋、情绪推理、基本归因错误等理论进行具体解释，并给出了可操作的行为建议和话术。",
+          "comment": "分析准确识别了基本归因错误与情绪推理，用回避型依恋正确区分'不在乎'与'回避亲密'，并给出了可执行的具体请求、观察窗口与决策规则，方向与理论运用均到位。",
           "scores": {
             "direction": 1.0,
             "theory": 1.0,
@@ -552,13 +1522,143 @@
             "direction": "A",
             "theory_usage": "A",
             "actionable": "A",
-            "comment": "高质量分析：准确识别了用户将回避行为等同于不在乎的核心认知偏差，运用回避型依恋、情绪推理、基本归因错误等理论进行具体解释，并给出了可操作的行为建议和话术。",
+            "comment": "分析准确识别了基本归因错误与情绪推理，用回避型依恋正确区分'不在乎'与'回避亲密'，并给出了可执行的具体请求、观察窗口与决策规则，方向与理论运用均到位。",
             "scores": {
               "direction": 1.0,
               "theory": 1.0,
               "actionable": 1.0
             }
           }
+        }
+      },
+      "cost": {
+        "nodes": {
+          "PREPROCESS": {
+            "calls": 1,
+            "input_tokens": 1942,
+            "output_tokens": 218,
+            "total_tokens": 2160,
+            "retries": 0,
+            "retry_input_tokens": 0,
+            "retry_output_tokens": 0,
+            "retry_tokens": 0,
+            "retry_token_ratio": 0.0,
+            "latency_ms": 1709,
+            "retry_latency_ms": 0,
+            "missing_usage": 0
+          },
+          "SIGNALS": {
+            "calls": 1,
+            "input_tokens": 3710,
+            "output_tokens": 5208,
+            "total_tokens": 8918,
+            "retries": 0,
+            "retry_input_tokens": 0,
+            "retry_output_tokens": 0,
+            "retry_tokens": 0,
+            "retry_token_ratio": 0.0,
+            "latency_ms": 22719,
+            "retry_latency_ms": 0,
+            "missing_usage": 0
+          },
+          "INFO_SYMM": {
+            "calls": 1,
+            "input_tokens": 2367,
+            "output_tokens": 273,
+            "total_tokens": 2640,
+            "retries": 0,
+            "retry_input_tokens": 0,
+            "retry_output_tokens": 0,
+            "retry_tokens": 0,
+            "retry_token_ratio": 0.0,
+            "latency_ms": 1325,
+            "retry_latency_ms": 0,
+            "missing_usage": 0
+          },
+          "EVIDENCE": {
+            "calls": 1,
+            "input_tokens": 2809,
+            "output_tokens": 856,
+            "total_tokens": 3665,
+            "retries": 0,
+            "retry_input_tokens": 0,
+            "retry_output_tokens": 0,
+            "retry_tokens": 0,
+            "retry_token_ratio": 0.0,
+            "latency_ms": 4978,
+            "retry_latency_ms": 0,
+            "missing_usage": 0
+          },
+          "ALTERNATIVE": {
+            "calls": 1,
+            "input_tokens": 3239,
+            "output_tokens": 977,
+            "total_tokens": 4216,
+            "retries": 0,
+            "retry_input_tokens": 0,
+            "retry_output_tokens": 0,
+            "retry_tokens": 0,
+            "retry_token_ratio": 0.0,
+            "latency_ms": 5966,
+            "retry_latency_ms": 0,
+            "missing_usage": 0
+          },
+          "SUMMARY": {
+            "calls": 1,
+            "input_tokens": 1183,
+            "output_tokens": 1309,
+            "total_tokens": 2492,
+            "retries": 0,
+            "retry_input_tokens": 0,
+            "retry_output_tokens": 0,
+            "retry_tokens": 0,
+            "retry_token_ratio": 0.0,
+            "latency_ms": 7756,
+            "retry_latency_ms": 0,
+            "missing_usage": 0
+          },
+          "COVERAGE_JUDGE": {
+            "calls": 2,
+            "input_tokens": 4498,
+            "output_tokens": 7704,
+            "total_tokens": 12202,
+            "retries": 0,
+            "retry_input_tokens": 0,
+            "retry_output_tokens": 0,
+            "retry_tokens": 0,
+            "retry_token_ratio": 0.0,
+            "latency_ms": 36089,
+            "retry_latency_ms": 0,
+            "missing_usage": 0
+          },
+          "CORRECTNESS_JUDGE": {
+            "calls": 2,
+            "input_tokens": 4840,
+            "output_tokens": 402,
+            "total_tokens": 5242,
+            "retries": 0,
+            "retry_input_tokens": 0,
+            "retry_output_tokens": 0,
+            "retry_tokens": 0,
+            "retry_token_ratio": 0.0,
+            "latency_ms": 3858,
+            "retry_latency_ms": 0,
+            "missing_usage": 0
+          }
+        },
+        "total": {
+          "calls": 10,
+          "input_tokens": 24588,
+          "output_tokens": 16947,
+          "total_tokens": 41535,
+          "retries": 0,
+          "retry_input_tokens": 0,
+          "retry_output_tokens": 0,
+          "retry_tokens": 0,
+          "retry_token_ratio": 0.0,
+          "latency_ms": 84400,
+          "retry_latency_ms": 0,
+          "missing_usage": 0
         }
       }
     },
@@ -589,47 +1689,177 @@
           "checks": {
             "graph_completed": true,
             "all_claims_have_evidence": true,
-            "all_claims_have_alternatives": false,
+            "all_claims_have_alternatives": true,
             "info_symmetry_produced": true,
             "contradictions_produced": true
           },
-          "passed": 4,
+          "passed": 5,
           "total": 5,
-          "score": 0.8
+          "score": 1.0
         },
         "coverage": {
           "covered_count": 4,
-          "missed_count": 1,
-          "comment": "最明显的缺口：建议②中缺少关键认知矫正——'第一次说'我爱你'不会让ta立刻走，但一直不说可能会'。joker给出了'做小实验'的行动建议，但没有明确点出这个核心的认知反转点，即用户最恐惧的'说了就会失去'其实是不成立的。",
-          "score": 0.8,
+          "missed_count": 0,
+          "comment": "分析全面覆盖了自我实现预言、回避型策略、关键洞察及两项建议，仅建议②的具体表述可更直接。",
+          "score": 1.0,
           "raw_response": {
-            "covered_count": 4,
-            "missed_count": 1,
-            "comment": "最明显的缺口：建议②中缺少关键认知矫正——'第一次说'我爱你'不会让ta立刻走，但一直不说可能会'。joker给出了'做小实验'的行动建议，但没有明确点出这个核心的认知反转点，即用户最恐惧的'说了就会失去'其实是不成立的。"
+            "covered_count": 5,
+            "missed_count": 0,
+            "comment": "分析全面覆盖了自我实现预言、回避型策略、关键洞察及两项建议，仅建议②的具体表述可更直接。"
           }
         },
         "correctness": {
           "direction": "A",
-          "theory_usage": "A",
+          "theory_usage": "B",
           "actionable": "A",
-          "comment": "准确识别了自我实现预言的核心机制，理论运用恰当且结合具体行为，给出了可操作的低风险表露实验建议，分析质量高。",
+          "comment": "核心机制（自我实现预言+情绪推理）识别到位且建议具体可操作，但以'认知失调'作为主诊断框架偏离了'回避型策略'这一核心，理论使用略有偏移。",
           "scores": {
             "direction": 1.0,
-            "theory": 1.0,
+            "theory": 0.75,
             "actionable": 1.0
           },
-          "total": 1.0,
+          "total": 0.92,
           "raw_response": {
             "direction": "A",
-            "theory_usage": "A",
+            "theory_usage": "B",
             "actionable": "A",
-            "comment": "准确识别了自我实现预言的核心机制，理论运用恰当且结合具体行为，给出了可操作的低风险表露实验建议，分析质量高。",
+            "comment": "核心机制（自我实现预言+情绪推理）识别到位且建议具体可操作，但以'认知失调'作为主诊断框架偏离了'回避型策略'这一核心，理论使用略有偏移。",
             "scores": {
               "direction": 1.0,
-              "theory": 1.0,
+              "theory": 0.5,
               "actionable": 1.0
             }
           }
+        }
+      },
+      "cost": {
+        "nodes": {
+          "PREPROCESS": {
+            "calls": 1,
+            "input_tokens": 1974,
+            "output_tokens": 1026,
+            "total_tokens": 3000,
+            "retries": 0,
+            "retry_input_tokens": 0,
+            "retry_output_tokens": 0,
+            "retry_tokens": 0,
+            "retry_token_ratio": 0.0,
+            "latency_ms": 4039,
+            "retry_latency_ms": 0,
+            "missing_usage": 0
+          },
+          "SIGNALS": {
+            "calls": 1,
+            "input_tokens": 3742,
+            "output_tokens": 1466,
+            "total_tokens": 5208,
+            "retries": 0,
+            "retry_input_tokens": 0,
+            "retry_output_tokens": 0,
+            "retry_tokens": 0,
+            "retry_token_ratio": 0.0,
+            "latency_ms": 6642,
+            "retry_latency_ms": 0,
+            "missing_usage": 0
+          },
+          "INFO_SYMM": {
+            "calls": 1,
+            "input_tokens": 2305,
+            "output_tokens": 525,
+            "total_tokens": 2830,
+            "retries": 0,
+            "retry_input_tokens": 0,
+            "retry_output_tokens": 0,
+            "retry_tokens": 0,
+            "retry_token_ratio": 0.0,
+            "latency_ms": 2513,
+            "retry_latency_ms": 0,
+            "missing_usage": 0
+          },
+          "EVIDENCE": {
+            "calls": 1,
+            "input_tokens": 2839,
+            "output_tokens": 1855,
+            "total_tokens": 4694,
+            "retries": 0,
+            "retry_input_tokens": 0,
+            "retry_output_tokens": 0,
+            "retry_tokens": 0,
+            "retry_token_ratio": 0.0,
+            "latency_ms": 10325,
+            "retry_latency_ms": 0,
+            "missing_usage": 0
+          },
+          "ALTERNATIVE": {
+            "calls": 1,
+            "input_tokens": 3269,
+            "output_tokens": 2469,
+            "total_tokens": 5738,
+            "retries": 0,
+            "retry_input_tokens": 0,
+            "retry_output_tokens": 0,
+            "retry_tokens": 0,
+            "retry_token_ratio": 0.0,
+            "latency_ms": 13390,
+            "retry_latency_ms": 0,
+            "missing_usage": 0
+          },
+          "SUMMARY": {
+            "calls": 1,
+            "input_tokens": 1544,
+            "output_tokens": 1252,
+            "total_tokens": 2796,
+            "retries": 0,
+            "retry_input_tokens": 0,
+            "retry_output_tokens": 0,
+            "retry_tokens": 0,
+            "retry_token_ratio": 0.0,
+            "latency_ms": 6559,
+            "retry_latency_ms": 0,
+            "missing_usage": 0
+          },
+          "COVERAGE_JUDGE": {
+            "calls": 2,
+            "input_tokens": 6802,
+            "output_tokens": 10587,
+            "total_tokens": 17389,
+            "retries": 0,
+            "retry_input_tokens": 0,
+            "retry_output_tokens": 0,
+            "retry_tokens": 0,
+            "retry_token_ratio": 0.0,
+            "latency_ms": 51003,
+            "retry_latency_ms": 0,
+            "missing_usage": 0
+          },
+          "CORRECTNESS_JUDGE": {
+            "calls": 2,
+            "input_tokens": 7144,
+            "output_tokens": 1936,
+            "total_tokens": 9080,
+            "retries": 0,
+            "retry_input_tokens": 0,
+            "retry_output_tokens": 0,
+            "retry_tokens": 0,
+            "retry_token_ratio": 0.0,
+            "latency_ms": 11162,
+            "retry_latency_ms": 0,
+            "missing_usage": 0
+          }
+        },
+        "total": {
+          "calls": 10,
+          "input_tokens": 29619,
+          "output_tokens": 21116,
+          "total_tokens": 50735,
+          "retries": 0,
+          "retry_input_tokens": 0,
+          "retry_output_tokens": 0,
+          "retry_tokens": 0,
+          "retry_token_ratio": 0.0,
+          "latency_ms": 105633,
+          "retry_latency_ms": 0,
+          "missing_usage": 0
         }
       }
     },
@@ -645,10 +1875,10 @@
             "依恋理论-回避型"
           ],
           "relevant": [
-            "基本归因错误",
-            "互惠规范",
             "投射效应",
-            "情绪推理"
+            "情绪推理",
+            "基本归因错误",
+            "互惠规范"
           ],
           "recall_1": 1,
           "recall_3": 0.25,
@@ -656,56 +1886,186 @@
             "情绪推理"
           ],
           "misses": [
+            "投射效应",
             "基本归因错误",
-            "互惠规范",
-            "投射效应"
+            "互惠规范"
           ]
         },
         "structural": {
           "checks": {
             "graph_completed": true,
             "all_claims_have_evidence": true,
-            "all_claims_have_alternatives": false,
+            "all_claims_have_alternatives": true,
             "info_symmetry_produced": true,
             "contradictions_produced": true
           },
-          "passed": 4,
+          "passed": 5,
           "total": 5,
-          "score": 0.8
+          "score": 1.0
         },
         "coverage": {
-          "covered_count": 6,
-          "missed_count": 1,
-          "comment": "joker 完整覆盖了三层认知偏差分析（基本归因错误、情绪推理+互惠规范、投射效应）以及直接表达需求的建议，但遗漏了期望中明确要求的'这是重复模式而非一次性失误'这一关键点——ta说'你每次都是在生气'说明模式已固化，joker 未讨论这一重复性含义。",
-          "score": 0.86,
+          "covered_count": 4,
+          "missed_count": 2,
+          "comment": "joker覆盖了基本归因错误、情绪推理、互惠规范、直接表达建议和重复模式，但完全缺失了投射效应这一关键方向。",
+          "score": 0.67,
           "raw_response": {
-            "covered_count": 6,
+            "covered_count": 5,
             "missed_count": 1,
-            "comment": "joker 完整覆盖了三层认知偏差分析（基本归因错误、情绪推理+互惠规范、投射效应）以及直接表达需求的建议，但遗漏了期望中明确要求的'这是重复模式而非一次性失误'这一关键点——ta说'你每次都是在生气'说明模式已固化，joker 未讨论这一重复性含义。"
+            "comment": "joker覆盖了基本归因错误、情绪推理、互惠规范、直接表达建议和重复模式，但完全缺失了投射效应这一关键方向。"
           }
         },
         "correctness": {
           "direction": "B",
           "theory_usage": "B",
           "actionable": "A",
-          "comment": "核心方向正确（情绪推理+互惠规范+投射效应三层都点到了），但投射效应被过度泛化贴标签，且碎片化的claim结构削弱了整体洞察的连贯性。最终回复的总结和行动建议是亮点。",
+          "comment": "准确抓住情绪推理、互惠规范和未说出口的期待，并给出可直接套用的表达脚本，但未明确点出基本归因错误与投射效应这两层核心机制，深度略欠。",
           "scores": {
             "direction": 0.6,
-            "theory": 0.5,
+            "theory": 0.75,
             "actionable": 1.0
           },
-          "total": 0.7,
+          "total": 0.78,
           "raw_response": {
             "direction": "B",
             "theory_usage": "B",
             "actionable": "A",
-            "comment": "核心方向正确（情绪推理+互惠规范+投射效应三层都点到了），但投射效应被过度泛化贴标签，且碎片化的claim结构削弱了整体洞察的连贯性。最终回复的总结和行动建议是亮点。",
+            "comment": "准确抓住情绪推理、互惠规范和未说出口的期待，并给出可直接套用的表达脚本，但未明确点出基本归因错误与投射效应这两层核心机制，深度略欠。",
             "scores": {
               "direction": 0.6,
               "theory": 0.5,
               "actionable": 1.0
             }
           }
+        }
+      },
+      "cost": {
+        "nodes": {
+          "PREPROCESS": {
+            "calls": 1,
+            "input_tokens": 2011,
+            "output_tokens": 782,
+            "total_tokens": 2793,
+            "retries": 0,
+            "retry_input_tokens": 0,
+            "retry_output_tokens": 0,
+            "retry_tokens": 0,
+            "retry_token_ratio": 0.0,
+            "latency_ms": 3814,
+            "retry_latency_ms": 0,
+            "missing_usage": 0
+          },
+          "SIGNALS": {
+            "calls": 1,
+            "input_tokens": 3779,
+            "output_tokens": 4169,
+            "total_tokens": 7948,
+            "retries": 0,
+            "retry_input_tokens": 0,
+            "retry_output_tokens": 0,
+            "retry_tokens": 0,
+            "retry_token_ratio": 0.0,
+            "latency_ms": 17694,
+            "retry_latency_ms": 0,
+            "missing_usage": 0
+          },
+          "INFO_SYMM": {
+            "calls": 1,
+            "input_tokens": 2530,
+            "output_tokens": 783,
+            "total_tokens": 3313,
+            "retries": 0,
+            "retry_input_tokens": 0,
+            "retry_output_tokens": 0,
+            "retry_tokens": 0,
+            "retry_token_ratio": 0.0,
+            "latency_ms": 3482,
+            "retry_latency_ms": 0,
+            "missing_usage": 0
+          },
+          "EVIDENCE": {
+            "calls": 1,
+            "input_tokens": 3045,
+            "output_tokens": 2289,
+            "total_tokens": 5334,
+            "retries": 0,
+            "retry_input_tokens": 0,
+            "retry_output_tokens": 0,
+            "retry_tokens": 0,
+            "retry_token_ratio": 0.0,
+            "latency_ms": 11531,
+            "retry_latency_ms": 0,
+            "missing_usage": 0
+          },
+          "ALTERNATIVE": {
+            "calls": 2,
+            "input_tokens": 7154,
+            "output_tokens": 5209,
+            "total_tokens": 12363,
+            "retries": 1,
+            "retry_input_tokens": 3679,
+            "retry_output_tokens": 2137,
+            "retry_tokens": 5816,
+            "retry_token_ratio": 0.47,
+            "latency_ms": 28912,
+            "retry_latency_ms": 12203,
+            "missing_usage": 0
+          },
+          "SUMMARY": {
+            "calls": 1,
+            "input_tokens": 2128,
+            "output_tokens": 1171,
+            "total_tokens": 3299,
+            "retries": 0,
+            "retry_input_tokens": 0,
+            "retry_output_tokens": 0,
+            "retry_tokens": 0,
+            "retry_token_ratio": 0.0,
+            "latency_ms": 7279,
+            "retry_latency_ms": 0,
+            "missing_usage": 0
+          },
+          "COVERAGE_JUDGE": {
+            "calls": 2,
+            "input_tokens": 9754,
+            "output_tokens": 5605,
+            "total_tokens": 15359,
+            "retries": 0,
+            "retry_input_tokens": 0,
+            "retry_output_tokens": 0,
+            "retry_tokens": 0,
+            "retry_token_ratio": 0.0,
+            "latency_ms": 25844,
+            "retry_latency_ms": 0,
+            "missing_usage": 0
+          },
+          "CORRECTNESS_JUDGE": {
+            "calls": 2,
+            "input_tokens": 10096,
+            "output_tokens": 1333,
+            "total_tokens": 11429,
+            "retries": 0,
+            "retry_input_tokens": 0,
+            "retry_output_tokens": 0,
+            "retry_tokens": 0,
+            "retry_token_ratio": 0.0,
+            "latency_ms": 8968,
+            "retry_latency_ms": 0,
+            "missing_usage": 0
+          }
+        },
+        "total": {
+          "calls": 11,
+          "input_tokens": 40497,
+          "output_tokens": 21341,
+          "total_tokens": 61838,
+          "retries": 1,
+          "retry_input_tokens": 3679,
+          "retry_output_tokens": 2137,
+          "retry_tokens": 5816,
+          "retry_token_ratio": 0.09,
+          "latency_ms": 107524,
+          "retry_latency_ms": 12203,
+          "missing_usage": 0
         }
       }
     }

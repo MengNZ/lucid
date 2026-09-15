@@ -118,7 +118,7 @@ Lucid 的上下文分三类，用三种机制处理：
 | **静态画像** | 年龄、学校、关系阶段 | LLM 提取，每次注入 prompt |
 | **观察** | 具体行为（邀约、拒绝、主动联系） | 出生即写 fact，语义检索注入 |
 
-历史行为不再整块灌回 state，而是转成 fact 存入 Store，分析时用 BGE 语义检索 top-K 相关事实注入。**被压缩掉的历史信息 100% 能从长期记忆检索回来。**
+历史行为不再整块灌回 state，而是转成 fact 存入 Store，分析时用 BGE 语义检索 top-K 相关事实注入——被压缩掉的行为以语义可检索的形式保留在长期记忆里，而非永久丢失。
 
 ### 3. 身份画像
 
@@ -132,7 +132,7 @@ preprocess 用 LLM 从对话中提取用户和 ta 的静态身份信息（年龄
 ### 5. JSON 稳定性（response_format + checklist）
 
 - **Checklist 模式**：LLM 回答选择题，代码查表算分，不直接让 LLM 拍数字
-- **`response_format=json_object`**：API 层强制输出合法 JSON，长复杂 JSON 生成**加速 15 倍**（模型不再犹豫/自我修正），解析失败率大幅下降
+- **`response_format=json_object`**：API 层强制输出合法 JSON，显著减少长 JSON 输出的犹豫/自我修正，解析失败率下降
 - **三层解析 fallback**：`json.loads` → 正则提取代码块 → 找首尾花括号
 
 ### 6. SSE 流式输出
@@ -158,19 +158,19 @@ preprocess 用 LLM 从对话中提取用户和 ta 的静态身份信息（年龄
 |------|:---:|------|
 | RAG Recall@1 | 0.60 | 首位检索命中率 |
 | RAG Recall@3 | 0.93 | 前三位命中率 |
-| 结构完整性 | 0.92 | graph 是否跑完、各节点是否产出 |
-| 覆盖度（裁判） | 0.57 | LLM 裁判对分析覆盖度的评判 *（受限 RAG 卡片仅 10 张）* |
-| 正确性（裁判） | 0.93 | 3 道 MCQ → 代码查表算分 |
-| **加权总分** | **0.84** | — |
+| 结构完整性 | 1.00 | graph 是否跑完、各节点是否产出 |
+| 覆盖度（裁判） | 0.74 | LLM 裁判对分析覆盖度的评判 *（受限 RAG 卡片仅 10 张）* |
+| 正确性（裁判） | 0.96 | 3 道 MCQ → 代码查表算分 |
+| **加权总分** | **0.91** | — |
 
-**v3 优化量化**：上下文压缩 **-83%**、记忆保留率 **100%**、长 JSON 生成 **加速 15 倍**。
+**v3 优化量化**：上下文压缩 **-83%**（300 条行为 → 51 条摘要 + 最近 50 条）。
 
 ## 快速开始
 
 ```bash
 # 1. 克隆
-git clone https://github.com/mstiandi/my_joker.git
-cd my_joker
+git clone https://github.com/mstiandi/lucid.git
+cd lucid
 
 # 2. 安装后端依赖
 pip install langgraph langchain langchain-openai fastapi uvicorn httpx sentence_transformers
@@ -191,13 +191,13 @@ npm run dev
 ## 项目结构
 
 ```
-my_joker/
+lucid/
 ├── achievement_graph/thought_v1/    # 主管线
 │   ├── graph.py                     # 图结构 + 编译
 │   ├── api.py                       # FastAPI + SSE 流式端点
 │   ├── app.py                       # 旧 Gradio 入口（已弃用）
 │   ├── nodes/                       # 9 个节点的实现
-│   └── state/LucidState.py          # 状态定义 + TypedDict
+│   └── state/JokerState.py          # 状态定义 + TypedDict
 ├── tools/
 │   ├── llm/                         # LLM 调用 + JSON 提取
 │   ├── context/                     # Token 预算 + 压缩 + prompt 构建
