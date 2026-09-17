@@ -7,7 +7,7 @@
 [![React](https://img.shields.io/badge/React-19%2B-61dafb)](https://react.dev)
 [![License](https://img.shields.io/badge/License-MIT-yellow)](LICENSE)
 
-**线上 Demo：** [https://bot.hzd-ms.com/joker-demo](https://bot.hzd-ms.com/joker-demo)
+**线上 Demo：** [https://lucid.hzd-ms.com](https://lucid.hzd-ms.com)
 
 ---
 
