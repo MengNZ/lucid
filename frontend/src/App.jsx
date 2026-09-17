@@ -105,7 +105,7 @@ function App() {
   return (
     <div className="app">
       <header className="header">
-        <h1>JOKER</h1>
+        <h1>Lucid</h1>
         <p>恋爱关系认知校准 · 把「猜对方在想什么」变成可检查的流程</p>
       </header>
 
