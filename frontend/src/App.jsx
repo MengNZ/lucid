@@ -55,23 +55,31 @@ function App() {
       const apply = (event) => {
         setMessages((prev) => {
           const next = [...prev]
-          const last = next[next.length - 1]
+          const idx = next.length - 1
+          const last = next[idx]
+          // 不可变更新：每个分支都复制新对象，绝不原地改 last。
+          // 否则 React StrictMode 会双重调用 updater，导致 token 每个字 append 两遍。
           if (event.type === 'node_start') {
-            last.nodes = last.nodes.map((n) =>
-              n.key === event.node ? { ...n, status: 'running' } : n
-            )
+            next[idx] = {
+              ...last,
+              nodes: last.nodes.map((n) =>
+                n.key === event.node ? { ...n, status: 'running' } : n
+              ),
+            }
           } else if (event.type === 'node_end') {
-            last.nodes = last.nodes.map((n) =>
-              n.key === event.node ? { ...n, status: 'done' } : n
-            )
+            next[idx] = {
+              ...last,
+              nodes: last.nodes.map((n) =>
+                n.key === event.node ? { ...n, status: 'done' } : n
+              ),
+            }
           } else if (event.type === 'token') {
-            last.content += event.content
+            next[idx] = { ...last, content: last.content + event.content }
           } else if (event.type === 'done') {
-            last.done = true
+            next[idx] = { ...last, done: true }
             setThreadId(event.thread_id)
           } else if (event.type === 'error') {
-            last.error = event.message
-            last.done = true
+            next[idx] = { ...last, error: event.message, done: true }
           }
           return next
         })
