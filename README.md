@@ -169,7 +169,7 @@ preprocess 用 LLM 从对话中提取用户和 ta 的静态身份信息（年龄
 
 ```bash
 # 1. 克隆
-git clone https://github.com/mstiandi/lucid.git
+git clone https://github.com/MengNZ/lucid.git
 cd lucid
 
 # 2. 安装后端依赖
