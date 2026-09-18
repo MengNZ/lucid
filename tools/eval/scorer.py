@@ -67,7 +67,7 @@ def score_structure(result: dict) -> dict:
                 "graph_completed": true,
                 "all_claims_have_evidence": true,
                 "all_claims_have_alternatives": true,
-                "info_symmetry_produced": true,
+                "info_symmetry_produced": false,
                 "contradictions_produced": true
             },
             "passed": 4,
