@@ -42,6 +42,11 @@ EVAL_CONCURRENCY = 3
 # ─── 加载数据集 ───────────────────────────────────────
 
 def _load_dataset(path: str) -> list[dict]:
+    # ground_truth 里 4 个字段：
+    #   relevant_theories  —— 该检索到的理论（scorer.score_rag 用）
+    #   expected_direction —— 正确分析方向一段话（judge_coverage / judge_correctness 用）
+    #   key_claims         —— 用户核心念头，预留：后续做 claim 级精确评测
+    #   should_flag        —— 该 flag 的理论/要点，预留：后续做逐点 checklist 覆盖评测
     with open(path, encoding="utf-8") as f:
         data = json.load(f)
 
