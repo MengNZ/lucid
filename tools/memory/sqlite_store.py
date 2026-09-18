@@ -5,6 +5,7 @@ SqliteStore — 继承 LangGraph BaseStore，用 SQLite 实现长期记忆。
 只实现 batch（同步）和 abatch（异步委托同步），put/get/search/delete 由 BaseStore 自动提供。
 """
 
+import asyncio
 import sqlite3
 import json
 from datetime import datetime, timezone
@@ -64,7 +65,8 @@ class SqliteStore(BaseStore):
         return results
 
     async def abatch(self, ops: Iterable[Op]) -> list[Result]:
-        return self.batch(ops)
+        # 真异步：把同步 batch 丢进线程池，await 期间事件循环能去干别的
+        return await asyncio.to_thread(self.batch, ops)
 
     # === 各 Op 的 SQL 实现 ===
 
